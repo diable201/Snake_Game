@@ -1,7 +1,7 @@
 import pygame
 import random
 
-
+# Initialize game
 pygame.init()
 pygame.display.set_caption("Snake")
 clock = pygame.time.Clock()
@@ -10,6 +10,7 @@ FPS = 60
 WIDTH = 800
 HEIGHT = 600
 
+# Colors for snake
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -21,7 +22,8 @@ background = pygame.image.load("background.png").convert()
 background_rect = background.get_rect()
 
 
-class Snake():
+# classes for game
+class Snake:
 
     def __init__(self):
         self.size = 1
@@ -41,7 +43,7 @@ class Snake():
     def add_to_snake(self):
         self.size += 1
         self.elements.append([0, 0])
-        self.is_add = False        
+        self.is_add = False
 
     def move(self):
         if self.is_add:
@@ -55,7 +57,7 @@ class Snake():
         self.elements[0][1] += self.dy
 
 
-class Food():
+class Food:
 
     def __init__(self):
         self.image = pygame.image.load("food.png")
@@ -65,18 +67,21 @@ class Food():
         self.rect = 10
 
     def draw(self):
-        for elements in self.elements:
+        for self.element in self.elements:
             screen.blit(self.image, (self.x, self.y))
 
 
 def collision():
-    if (food.x >= snake.elements[0][0] - food.image.get_size()[0] and food.x < snake.elements[0][0] + food.image.get_size()[0]) and  (food.y >= snake.elements[0][1] - food.image.get_size()[1] and food.y < snake.elements[0][1] + food.image.get_size()[1]):
-        snake.is_add = True  
-        if snake.is_add == True:
+    if (snake.elements[0][0] - food.image.get_size()[0] <= food.x < snake.elements[0][0] +
+        food.image.get_size()[0]) and (
+            snake.elements[0][1] - food.image.get_size()[1] <= food.y < snake.elements[0][1] +
+            food.image.get_size()[1]):
+        snake.is_add = True
+        if snake.is_add:
             snake.score += 1
             food.x = random.randint(10, 780)
             food.y = random.randint(10, 570)
- 
+
 
 # Start menu for a new game
 def start_menu():
@@ -126,39 +131,39 @@ def end_menu():
 snake = Snake()
 food = Food()
 
-
+# Initial parameters
 game = True
 velocity = 5
 New_Game = True
 Game_Over = False
 Scores = 0
 
+# Main loop
 while game:
     clock.tick(FPS)
     if New_Game:
         start_menu()
         New_Game = False
     for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT:
+            game = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
                 game = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    game = False
-                if event.key == pygame.K_d:
-                    snake.dx = velocity
-                    snake.dy = 0
-                if event.key == pygame.K_s:
-                    snake.dx = 0
-                    snake.dy = velocity
-                if event.key == pygame.K_a:
-                    snake.dx = -velocity
-                    snake.dy = 0
-                if event.key == pygame.K_w:
-                    snake.dx = 0
-                    snake.dy = -velocity
-                if snake.elements[0] in snake.elements[1:]:
-                    Game_Over = True
-
+            if event.key == pygame.K_d:
+                snake.dx = velocity
+                snake.dy = 0
+            if event.key == pygame.K_s:
+                snake.dx = 0
+                snake.dy = velocity
+            if event.key == pygame.K_a:
+                snake.dx = -velocity
+                snake.dy = 0
+            if event.key == pygame.K_w:
+                snake.dx = 0
+                snake.dy = -velocity
+            if snake.elements[0] in snake.elements[1:]:
+                Game_Over = True
 
     if snake.elements[0][0] > WIDTH:
         Game_Over = True
@@ -172,9 +177,9 @@ while game:
     if Game_Over:
         end_menu()
 
-
-    screen.fill(BLACK)
+    # screen.fill(BLACK)
     screen.blit(background, background_rect)
+    pygame.display.update()
     snake.move()
     collision()
     snake.draw()
