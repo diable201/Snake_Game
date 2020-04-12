@@ -1,6 +1,8 @@
 import pygame
 import random
 
+from os import path
+
 # Initialize game
 pygame.init()
 pygame.display.set_caption("Snake")
@@ -17,9 +19,18 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+texture_dir = path.join(path.dirname(__file__), 'Textures')
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-background = pygame.image.load("background.png").convert()
+background = pygame.image.load(path.join(texture_dir, 'background.png')).convert()
 background_rect = background.get_rect()
+
+# Load sound directory and main theme for game
+sound_dir = path.join(path.dirname(__file__), 'Sound')
+pygame.mixer.init()
+pygame.mixer.music.load(path.join(sound_dir, 'ost.ogg'))
+pygame.mixer.music.play(-1)  # for loop
+pygame.mixer.music.set_volume(10)
 
 
 # classes for game
@@ -60,7 +71,7 @@ class Snake:
 class Food:
 
     def __init__(self):
-        self.image = pygame.image.load("food.png")
+        self.image = pygame.image.load(path.join(texture_dir, 'food.png'))
         self.x = random.randint(10, 780)
         self.y = random.randint(10, 570)
         self.elements = [[100, 100]]
@@ -102,7 +113,7 @@ def start_menu():
 
 # Render text in the window
 def render(surface, text, size, x, y):
-    font_name = pygame.font.match_font('Arial')
+    font_name = pygame.font.match_font('arial')
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, BLACK)
     text_rect = text_surface.get_rect()
@@ -165,6 +176,7 @@ while game:
             if snake.elements[0] in snake.elements[1:]:
                 Game_Over = True
 
+    # Borders
     if snake.elements[0][0] > WIDTH:
         Game_Over = True
     if snake.elements[0][0] < 0:
@@ -177,14 +189,14 @@ while game:
     if Game_Over:
         end_menu()
 
-    # screen.fill(BLACK)
+    screen.fill(BLACK)
     screen.blit(background, background_rect)
-    pygame.display.update()
     snake.move()
     collision()
     snake.draw()
     food.draw()
     render(screen, str("Scores: " + str(snake.score)), 30, WIDTH / 2, 20)
     pygame.display.flip()
+
 
 pygame.quit()
